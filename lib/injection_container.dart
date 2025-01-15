@@ -18,34 +18,34 @@ final getIt = GetIt.instance;
 )
 Future<void> configureDependencies() => init(getIt);
 
-@module
-abstract class RegisterModule {
-  @lazySingleton
-  Dio get dio => Dio(BaseOptions(
-        baseUrl: 'https://api.example.com', // Replace with your API URL
-        connectTimeout: const Duration(seconds: 5),
-        receiveTimeout: const Duration(seconds: 3),
-      ));
-}
+// @module
+// abstract class RegisterModule {
+//   @lazySingleton
+//   Dio get dio => Dio(BaseOptions(
+//         baseUrl: 'https://api.example.com', // Replace with your API URL
+//         connectTimeout: const Duration(seconds: 5),
+//         receiveTimeout: const Duration(seconds: 3),
+//       ));
+// }
 
-@module
-abstract class AppModule {
-  @Injectable(as: GameRepository)
-  GameRepositoryImpl gameRepository(GameRemoteDataSource dataSource) =>
-      GameRepositoryImpl(remoteDataSource: dataSource);
+// @module
+// abstract class AppModule {
+//   @Injectable(as: GameRepository)
+//   GameRepositoryImpl gameRepository(GameRemoteDataSource dataSource) =>
+//       GameRepositoryImpl(remoteDataSource: dataSource);
 
-  @Injectable(as: GameRemoteDataSource)
-  GameRemoteDataSourceImpl gameRemoteDataSource(Dio dio) =>
-      GameRemoteDataSourceImpl(dio: dio);
-}
+//   @Injectable(as: GameRemoteDataSource)
+//   GameRemoteDataSourceImpl gameRemoteDataSource(Dio dio) =>
+//       GameRemoteDataSourceImpl(dio: dio);
+// }
 
-@module
-abstract class StorageModule {
-  @preResolve
-  @singleton
-  Future<SharedPreferences> get sharedPreferences =>
-      SharedPreferences.getInstance();
-}
+// @module
+// abstract class StorageModule {
+//   @preResolve
+//   @singleton
+//   Future<SharedPreferences> get sharedPreferences =>
+//       SharedPreferences.getInstance();
+// }
 
 @injectable
 class HomeBlocFactory {

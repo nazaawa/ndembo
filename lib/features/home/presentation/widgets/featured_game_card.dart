@@ -31,7 +31,7 @@ class FeaturedGameCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: 120,
+            height: 80,
             width: double.infinity,
             child: CachedNetworkImage(
               imageUrl: game.imageUrl,
