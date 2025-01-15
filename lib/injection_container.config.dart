@@ -14,7 +14,9 @@ import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 import 'core/di/register_module.dart' as _i854;
+import 'features/home/data/datasources/card_games_data_source.dart' as _i634;
 import 'features/home/data/datasources/game_remote_data_source.dart' as _i628;
+import 'features/home/data/datasources/remote_data_source.dart' as _i351;
 import 'features/home/data/repositories/game_repository_impl.dart' as _i394;
 import 'features/home/domain/repositories/game_repository.dart' as _i72;
 import 'features/home/presentation/bloc/home_bloc.dart' as _i123;
@@ -36,7 +38,10 @@ Future<_i174.GetIt> init(
     () => registerModule.sharedPreferences,
     preResolve: true,
   );
+  gh.factory<_i634.CardGamesDataSource>(() => _i634.CardGamesDataSource());
   gh.lazySingleton<_i361.Dio>(() => registerModule.dio);
+  gh.factory<_i351.GameRemoteDataSource>(() => _i351.GameRemoteDataSourceImpl(
+      cardGamesDataSource: gh<_i634.CardGamesDataSource>()));
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.dio,
     instanceName: 'BaseClient',
@@ -53,3 +58,4 @@ Future<_i174.GetIt> init(
 }
 
 class _$RegisterModule extends _i854.RegisterModule {}
+

@@ -25,6 +25,11 @@ Map<String, dynamic> _$GameModelToJson(GameModel instance) => <String, dynamic>{
     };
 
 const _$GameTypeEnumMap = {
+  GameType.card: 'card',
+  GameType.dice: 'dice',
+  GameType.board: 'board',
+  GameType.action: 'action',
+  GameType.other: 'other',
   GameType.tictactoe: 'tictactoe',
   GameType.rockPaperScissors: 'rockPaperScissors',
   GameType.coinFlip: 'coinFlip',

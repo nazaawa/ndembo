@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ndembo/features/games/presentation/pages/checkers_game_screen.dart';
+import 'package:ndembo/features/games/presentation/pages/dice_screen.dart';
+import 'package:ndembo/features/games/presentation/pages/ngola_game_screen.dart';
+import 'package:ndembo/features/games/presentation/pages/snakes_and_ladders.dart';
+import 'package:ndembo/features/games/presentation/pages/virtual_race_screen.dart';
 import '../../../games/presentation/pages/tictactoe_screen.dart';
 import '../../../games/presentation/pages/rock_paper_scissors_screen.dart';
 import '../../../games/presentation/pages/coin_flip_screen.dart';
@@ -99,6 +104,61 @@ class _GameSelectionScreenState extends State<GameSelectionScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const CoinFlipScreen(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GameCard(
+                  title: 'Ludo Simplifié',
+                  description: 'Une version simplifiée du jeu Ludo',
+                  onPlay: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SnakesAndLaddersScreen(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GameCard(
+                  title: 'Découvrir le hasard',
+                  description: 'Un simple jeu de hasard',
+                  onPlay: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DiceGameScreen(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GameCard(
+                  title: 'Dames',
+                  description: 'Un jeu de dames simplifié',
+                  onPlay: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CheckersGameScreen(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GameCard(
+                  title: 'Jeu de course virtuelle',
+                  description: 'Un jeu de course virtuelle simplifié',
+                  onPlay: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ModeSelectionScreen(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GameCard(
+                  title: 'Jeu de Ngola',
+                  description: 'Un jeu de Ngola simplifié',
+                  onPlay: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NgolaGameScreen(),
                     ),
                   ),
                 ),
