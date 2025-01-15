@@ -1,9 +1,11 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/game.dart';
 import '../../domain/repositories/game_repository.dart';
 import '../datasources/game_remote_data_source.dart';
 
+@Injectable(as: GameRepository)
 class GameRepositoryImpl implements GameRepository {
   final GameRemoteDataSource remoteDataSource;
 

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:injectable/injectable.dart';
 import '../models/game_model.dart';
 
 abstract class GameRemoteDataSource {
@@ -7,10 +8,11 @@ abstract class GameRemoteDataSource {
   Future<List<GameModel>> searchGames(String query);
 }
 
+@Injectable(as: GameRemoteDataSource)
 class GameRemoteDataSourceImpl implements GameRemoteDataSource {
-  final Dio client;
+  final Dio dio;
 
-  GameRemoteDataSourceImpl({required this.client});
+  GameRemoteDataSourceImpl({required this.dio});
 
   @override
   Future<List<GameModel>> getFeaturedGames() async {
@@ -19,17 +21,19 @@ class GameRemoteDataSourceImpl implements GameRemoteDataSource {
     return [
       const GameModel(
         id: '1',
-        title: 'New Adventures',
-        description: 'Exciting games just!',
+        title: 'Tic-Tac-Toe',
+        description: 'Le classique jeu de morpion! Affrontez l\'ordinateur ou un ami.',
         imageUrl: 'https://picsum.photos/400/300?random=1',
         isFeatured: true,
+        gameType: GameType.tictactoe,
       ),
       const GameModel(
         id: '2',
-        title: 'Mega Sale',
-        description: 'Limited time offers',
+        title: 'Pierre-Papier-Ciseaux',
+        description: 'Testez votre chance et votre stratégie!',
         imageUrl: 'https://picsum.photos/400/300?random=2',
         isFeatured: true,
+        gameType: GameType.rockPaperScissors,
       ),
     ];
   }
@@ -40,34 +44,37 @@ class GameRemoteDataSourceImpl implements GameRemoteDataSource {
     return [
       const GameModel(
         id: '3',
-        title: 'Epic Battle',
-        description: 'Join the ultimate fight for glory.',
+        title: 'Pile ou Face',
+        description: 'Un simple jeu de hasard. Choisissez pile ou face!',
         imageUrl: 'https://picsum.photos/200/200?random=3',
+        gameType: GameType.coinFlip,
       ),
       const GameModel(
         id: '4',
-        title: 'Mystery Quest',
-        description: 'Unravel the secrets of the past.',
+        title: 'Tic-Tac-Toe Pro',
+        description: 'Version avancée avec des défis supplémentaires.',
         imageUrl: 'https://picsum.photos/200/200?random=4',
+        gameType: GameType.tictactoe,
       ),
       const GameModel(
         id: '5',
-        title: 'Fantasy World',
-        description: 'Explore magical realms of adventure.',
+        title: 'Pierre-Papier-Ciseaux Tournoi',
+        description: 'Participez à des tournois en ligne!',
         imageUrl: 'https://picsum.photos/200/200?random=5',
+        gameType: GameType.rockPaperScissors,
       ),
       const GameModel(
         id: '6',
-        title: 'Racing Legends',
-        description: 'Who will speed to victory?',
+        title: 'Pile ou Face Challenge',
+        description: 'Défiez vos amis dans des séries de lancers.',
         imageUrl: 'https://picsum.photos/200/200?random=6',
+        gameType: GameType.coinFlip,
       ),
     ];
   }
 
   @override
   Future<List<GameModel>> searchGames(String query) async {
-    // TODO: Implement real API call
     final allGames = [...await getFeaturedGames(), ...await getPopularGames()];
     return allGames
         .where((game) =>

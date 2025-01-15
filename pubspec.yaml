@@ -40,6 +40,7 @@ dependencies:
   flutter_bloc: ^8.1.3
   # Dependency Injection
   get_it: ^7.6.4
+  injectable: ^2.3.2
   # Functional Programming
   dartz: ^0.10.1
   # Remote API
@@ -49,6 +50,7 @@ dependencies:
   # Others
   equatable: ^2.0.5
   json_annotation: ^4.8.1
+  auto_route: ^7.8.4
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +64,8 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   build_runner: ^2.4.7
   json_serializable: ^6.7.1
+  injectable_generator: ^2.4.1
+  auto_route_generator: ^7.3.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

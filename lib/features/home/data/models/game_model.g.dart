@@ -12,6 +12,7 @@ GameModel _$GameModelFromJson(Map<String, dynamic> json) => GameModel(
       description: json['description'] as String,
       imageUrl: json['imageUrl'] as String,
       isFeatured: json['isFeatured'] as bool? ?? false,
+      gameType: $enumDecode(_$GameTypeEnumMap, json['gameType']),
     );
 
 Map<String, dynamic> _$GameModelToJson(GameModel instance) => <String, dynamic>{
@@ -20,4 +21,11 @@ Map<String, dynamic> _$GameModelToJson(GameModel instance) => <String, dynamic>{
       'description': instance.description,
       'imageUrl': instance.imageUrl,
       'isFeatured': instance.isFeatured,
+      'gameType': _$GameTypeEnumMap[instance.gameType]!,
     };
+
+const _$GameTypeEnumMap = {
+  GameType.tictactoe: 'tictactoe',
+  GameType.rockPaperScissors: 'rockPaperScissors',
+  GameType.coinFlip: 'coinFlip',
+};

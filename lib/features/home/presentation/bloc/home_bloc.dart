@@ -1,11 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:injectable/injectable.dart';
 import '../../domain/entities/game.dart';
 import '../../domain/repositories/game_repository.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
 
+@injectable
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GameRepository gameRepository;
 
@@ -23,10 +25,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final featuredGamesResult = await gameRepository.getFeaturedGames();
     final popularGamesResult = await gameRepository.getPopularGames();
 
-    await featuredGamesResult.fold(
-      (failure) async => emit(HomeError(message: 'Failed to load games')),
-      (featuredGames)  {
-         popularGamesResult.fold(
+    featuredGamesResult.fold(
+      (failure) => emit(HomeError(message: 'Failed to load games')),
+      (featuredGames) {
+        popularGamesResult.fold(
           (failure) => emit(HomeError(message: 'Failed to load games')),
           (popularGames) => emit(
             HomeLoaded(

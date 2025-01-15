@@ -1,152 +1,116 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../domain/entities/game.dart';
+import '../../../../injection_container.dart';
 import '../bloc/home_bloc.dart';
 import '../widgets/featured_game_card.dart';
 import '../widgets/game_list_item.dart';
 import '../widgets/search_bar_widget.dart';
+import '../../../game_selection/presentation/pages/game_selection_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: Colors.grey[50],
-          body: SafeArea(
-            child: CustomScrollView(
-              slivers: [
-                _buildHeader(),
-                if (state is HomeLoading)
-                  const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                else if (state is HomeLoaded) ...[
-                  _buildFeaturedSection(state.featuredGames),
-                  _buildPopularGamesSection(state.popularGames),
-                ] else if (state is HomeError)
-                  SliverFillRemaining(
-                    child: Center(child: Text(state.message)),
+    return BlocProvider(
+      create: (context) => getIt<HomeBloc>()..add(LoadHomeData()),
+      child: Scaffold(
+        body: BlocBuilder<HomeBloc, HomeState>(
+          builder: (context, state) {
+            if (state is HomeLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is HomeError) {
+              return Center(child: Text(state.message));
+            } else if (state is HomeLoaded) {
+              return CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                    floating: true,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    title: const Text('Ndembo'),
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.games),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const GameSelectionScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                const SliverToBoxAdapter(child: SizedBox(height: 80)),
-              ],
-            ),
-          ),
-          bottomNavigationBar: _buildBottomNavigationBar(),
-        );
-      },
-    );
-  }
-
-  Widget _buildHeader() {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Welcome!',
-              style: GoogleFonts.poppins(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const SearchBarWidget(),
-          ],
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: SearchBarWidget(),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 200,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.all(16),
+                        itemCount: state.featuredGames.length,
+                        itemBuilder: (context, index) {
+                          final game = state.featuredGames[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: FeaturedGameCard(game: game),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        'Jeux Populaires',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final game = state.popularGames[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: GameListItem(game: game),
+                        );
+                      },
+                      childCount: state.popularGames.length,
+                    ),
+                  ),
+                ],
+              );
+            } else if (state is HomeSearchResults) {
+              return ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: state.games.length,
+                itemBuilder: (context, index) {
+                  final game = state.games[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: GameListItem(game: game),
+                  );
+                },
+              );
+            }
+            return const SizedBox();
+          },
         ),
-      ),
-    );
-  }
-
-  Widget _buildFeaturedSection(List<Game> games) {
-    return SliverToBoxAdapter(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Featured',
-              style: GoogleFonts.poppins(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 190,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              scrollDirection: Axis.horizontal,
-              itemCount: games.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 16),
-              itemBuilder: (context, index) => FeaturedGameCard(game: games[index]),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPopularGamesSection(List<Game> games) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) => GameListItem(game: games[index]),
-        childCount: games.length,
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        selectedItemColor: Colors.blue[700],
-        unselectedItemColor: Colors.grey[400],
-        selectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500),
-        unselectedLabelStyle: GoogleFonts.poppins(),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.gamepad_rounded),
-            label: 'Games',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet_rounded),
-            label: 'Wallet',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.help_rounded),
-            label: 'Support',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_rounded),
-            label: 'Profile',
-          ),
-        ],
       ),
     );
   }
