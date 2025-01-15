@@ -1,0 +1,23 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'game_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+GameModel _$GameModelFromJson(Map<String, dynamic> json) => GameModel(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      description: json['description'] as String,
+      imageUrl: json['imageUrl'] as String,
+      isFeatured: json['isFeatured'] as bool? ?? false,
+    );
+
+Map<String, dynamic> _$GameModelToJson(GameModel instance) => <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'description': instance.description,
+      'imageUrl': instance.imageUrl,
+      'isFeatured': instance.isFeatured,
+    };
