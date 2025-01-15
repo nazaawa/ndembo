@@ -36,7 +36,6 @@ Future<_i174.GetIt> init(
     () => registerModule.sharedPreferences,
     preResolve: true,
   );
-  gh.lazySingleton<_i361.Dio>(() => registerModule.dio);
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.dio,
     instanceName: 'BaseClient',

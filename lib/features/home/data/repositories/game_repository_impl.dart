@@ -14,8 +14,30 @@ class GameRepositoryImpl implements GameRepository {
   @override
   Future<Either<Failure, List<Game>>> getFeaturedGames() async {
     try {
-      final result = await remoteDataSource.getFeaturedGames();
-      return Right(result);
+      final games = [
+        Game(
+          id: '1',
+          title: 'Bataille',
+          description: 'Un jeu où deux joueurs comparent la valeur de leurs cartes. La carte la plus haute gagne.',
+          imageUrl: 'assets/images/bataille.png',
+          route: '/bataille',
+        ),
+        Game(
+          id: '2',
+          title: 'Blackjack',
+          description: 'Une version simplifiée du célèbre jeu de casino.',
+          imageUrl: 'assets/images/blackjack.png',
+          route: '/blackjack',
+        ),
+        Game(
+          id: '3',
+          title: 'Poker à deux cartes',
+          description: 'Les joueurs parient sur qui a la meilleure main avec seulement deux cartes.',
+          imageUrl: 'assets/images/poker.png',
+          route: '/poker',
+        ),
+      ];
+      return Right(games);
     } catch (e) {
       return Left(ServerFailure());
     }
