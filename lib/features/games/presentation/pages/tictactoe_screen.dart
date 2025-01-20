@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../widgets/tictactoe_board.dart';
 import '../widgets/game_result_dialog.dart';
 
 class TicTacToeScreen extends StatefulWidget {
@@ -93,9 +92,9 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black87),
@@ -109,34 +108,148 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
             color: Colors.black87,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.black87),
-            onPressed: () {
-              setState(() {
-                _initializeGame();
-              });
-            },
+      ),
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.white,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildPlayerInfo('Joueur X', isPlayerXTurn, Colors.blue),
+                Container(
+                  height: 40,
+                  width: 2,
+                  color: Colors.grey[300],
+                ),
+                _buildPlayerInfo('Joueur O', !isPlayerXTurn, Colors.red),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 8,
+                        crossAxisSpacing: 8,
+                      ),
+                      itemCount: 9,
+                      itemBuilder: (context, index) {
+                        final row = index ~/ 3;
+                        final col = index % 3;
+                        return _buildTile(row, col);
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.white,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      _initializeGame();
+                    });
+                  },
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Recommencer'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blue,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    );
+  }
+
+  Widget _buildPlayerInfo(String player, bool isCurrentTurn, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        color: isCurrentTurn ? color.withOpacity(0.1) : Colors.transparent,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: isCurrentTurn ? color : Colors.transparent,
+          width: 2,
+        ),
+      ),
+      child: Row(
         children: [
+          Icon(
+            Icons.person,
+            color: isCurrentTurn ? color : Colors.grey,
+          ),
+          const SizedBox(width: 8),
           Text(
-            isPlayerXTurn ? 'Tour du Joueur X' : 'Tour du Joueur O',
+            player,
             style: GoogleFonts.poppins(
-              fontSize: 24,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              fontSize: 16,
+              fontWeight: isCurrentTurn ? FontWeight.bold : FontWeight.normal,
+              color: isCurrentTurn ? color : Colors.grey,
             ),
           ),
-          const SizedBox(height: 40),
-          TicTacToeBoard(
-            board: board,
-            onTileTapped: _onTileTapped,
-          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTile(int row, int col) {
+    return InkWell(
+      onTap: () => _onTileTapped(row, col),
+      child: Container(
+        decoration: BoxDecoration(
+          color: board[row][col].isNotEmpty
+              ? (board[row][col] == 'X' ? Colors.blue.withOpacity(0.1) : Colors.red.withOpacity(0.1))
+              : Colors.grey[100],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: board[row][col].isNotEmpty
+                ? (board[row][col] == 'X' ? Colors.blue.withOpacity(0.3) : Colors.red.withOpacity(0.3))
+                : Colors.grey[300]!,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            board[row][col],
+            style: GoogleFonts.poppins(
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+              color: board[row][col] == 'X' ? Colors.blue : Colors.red,
+            ),
+          ),
+        ),
       ),
     );
   }

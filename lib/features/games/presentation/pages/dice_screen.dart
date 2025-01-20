@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DiceGameScreen extends StatefulWidget {
   const DiceGameScreen({super.key});
@@ -115,21 +116,30 @@ class _DiceGameScreenState extends State<DiceGameScreen>
         height: 100,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black26,
-              blurRadius: 5,
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.red[300]!,
+              Colors.red[700]!,
+            ],
+          ),
         ),
         child: Center(
           child: Text(
             number.toString(),
-            style: const TextStyle(
-              fontSize: 40,
+            style: GoogleFonts.poppins(
+              fontSize: 48,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
         ),
@@ -183,55 +193,135 @@ class _DiceGameScreenState extends State<DiceGameScreen>
     );
   }
 
+  Widget _buildScoreCard(String label, int score, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            score.toString(),
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
-        title: const Text('Jeu de dés - Deux joueurs'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'Dés',
+          style: GoogleFonts.poppins(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20),
-            Text(
-              gameEnded
-                  ? "Partie terminée !\nScores - Joueur 1 : $player1Score | Joueur 2 : $player2Score"
-                  : "Joueur $currentPlayer : Placez votre pari",
-              style: const TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            color: Colors.white,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                buildDice(dice1),
-                const SizedBox(width: 10),
-                buildDice(dice2),
+                _buildScoreCard('Joueur 1', player1Score, Colors.blue),
+                Container(
+                  height: 40,
+                  width: 2,
+                  color: Colors.grey[300],
+                ),
+                _buildScoreCard('Joueur 2', player2Score, Colors.green),
               ],
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: (isRolling ||
-                      (currentPlayer == 1 && player1Bet.isEmpty) ||
-                      (currentPlayer == 2 && player2Bet.isEmpty))
-                  ? null
-                  : rollDice,
-              child: isRolling
-                  ? const Text("Lancement...")
-                  : const Text("Lancer les dés"),
-            ),
-            const SizedBox(height: 20),
-            buildBettingOptions(),
-            const SizedBox(height: 20),
-            if (gameEnded)
-              ElevatedButton(
-                onPressed: resetGame,
-                child: const Text("Nouvelle partie"),
+          ),
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buildDice(dice1),
+                      const SizedBox(width: 24),
+                      buildDice(dice2),
+                    ],
+                  ),
+                  const SizedBox(height: 48),
+                  ElevatedButton(
+                    onPressed: (isRolling ||
+                            (currentPlayer == 1 && player1Bet.isEmpty) ||
+                            (currentPlayer == 2 && player2Bet.isEmpty))
+                        ? null
+                        : rollDice,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 4,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.casino),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Lancer les dés',
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  buildBettingOptions(),
+                  const SizedBox(height: 20),
+                  if (gameEnded)
+                    ElevatedButton(
+                      onPressed: resetGame,
+                      child: const Text("Nouvelle partie"),
+                    ),
+                ],
               ),
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

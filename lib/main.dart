@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ndembo/features/game_selection/presentation/pages/game_selection_screen.dart';
 import 'features/home/presentation/bloc/home_bloc.dart';
-import 'features/home/presentation/pages/home_screen.dart';
 import 'core/theme/app_theme.dart';
 import 'injection_container.dart';
 
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       home: BlocProvider(
         create: (context) => getIt<HomeBloc>()..add(LoadHomeData()),
-        child: const HomeScreen(),
+        child: const GameSelectionScreen(),
       ),
     );
   }
