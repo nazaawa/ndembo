@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SnakesAndLaddersScreen extends StatefulWidget {
   const SnakesAndLaddersScreen({super.key});
@@ -156,70 +157,279 @@ class _SnakesAndLaddersScreenState extends State<SnakesAndLaddersScreen>
     });
   }
 
-  Widget buildGameBoard() {
-    return Container(
-      margin: const EdgeInsets.all(20),
-      height: 400,
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 10,
-          crossAxisSpacing: 4,
-          mainAxisSpacing: 4,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F6FA),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => Navigator.pop(context),
         ),
-        itemCount: winningPosition + 1,
-        itemBuilder: (context, index) {
-          bool hasPlayer1 = playerPositions[0] == index;
-          bool hasPlayer2 = playerPositions[1] == index;
-          bool isSpecial = specialCells.containsKey(index);
-
-          return Container(
-            decoration: BoxDecoration(
-              color: isSpecial
-                  ? _getCellColor(specialCells[index]!.type)
-                  : Colors.grey[300],
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: Colors.black26,
-                width: 1,
+        title: Text(
+          'Serpents et Échelles',
+          style: GoogleFonts.poppins(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.black87),
+            onPressed: resetGame,
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.white,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildPlayerInfo(1, Colors.blue),
+                Container(
+                  height: 40,
+                  width: 2,
+                  color: Colors.grey[300],
+                ),
+                _buildPlayerInfo(2, Colors.red),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.blue[50]!,
+                    Colors.blue[100]!,
+                  ],
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    buildGameBoard(),
+                    const SizedBox(height: 20),
+                    _buildDiceSection(),
+                  ],
+                ),
               ),
             ),
-            child: Stack(
-              children: [
-                Center(
-                  child: Text(
-                    index.toString(),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlayerInfo(int player, Color color) {
+    bool isCurrentPlayer = currentPlayer == player;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        color: isCurrentPlayer ? color.withOpacity(0.1) : Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Text(
+            'Joueur $player',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: isCurrentPlayer ? FontWeight.bold : FontWeight.normal,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Position: ${playerPositions[player - 1]}',
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Colors.black54,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDiceSection() {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(
+            'Tour du Joueur $currentPlayer',
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: currentPlayer == 1 ? Colors.blue : Colors.red,
+            ),
+          ),
+          const SizedBox(height: 20),
+          AnimatedBuilder(
+            animation: _animation,
+            builder: (context, child) {
+              return Transform.rotate(
+                angle: _animation.value * 4 * pi,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      diceNumber.toString(),
+                      style: GoogleFonts.poppins(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
                   ),
                 ),
-                if (hasPlayer1)
-                  const Positioned(
-                    top: 4,
-                    left: 4,
-                    child: CircleAvatar(
-                      backgroundColor: Colors.blue,
-                      radius: 10,
-                      child: Text('1',
-                          style: TextStyle(color: Colors.white, fontSize: 12)),
-                    ),
-                  ),
-                if (hasPlayer2)
-                  const Positioned(
-                    bottom: 4,
-                    right: 4,
-                    child: CircleAvatar(
-                      backgroundColor: Colors.red,
-                      radius: 10,
-                      child: Text('2',
-                          style: TextStyle(color: Colors.white, fontSize: 12)),
-                    ),
-                  ),
-              ],
+              );
+            },
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: isRolling ? null : rollDice,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: currentPlayer == 1 ? Colors.blue : Colors.red,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
             ),
-          );
-        },
+            child: Text(
+              isRolling ? 'Lancement...' : 'Lancer le dé',
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildGameBoard() {
+    return Container(
+      margin: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 10,
+            crossAxisSpacing: 2,
+            mainAxisSpacing: 2,
+          ),
+          itemCount: winningPosition + 1,
+          itemBuilder: (context, index) {
+            bool hasPlayer1 = playerPositions[0] == index;
+            bool hasPlayer2 = playerPositions[1] == index;
+            bool isSpecial = specialCells.containsKey(index);
+            
+            return Container(
+              decoration: BoxDecoration(
+                color: isSpecial
+                    ? _getCellColor(specialCells[index]!.type)
+                    : Colors.grey[100],
+                border: Border.all(
+                  color: Colors.grey[300]!,
+                  width: 1,
+                ),
+              ),
+              child: Stack(
+                children: [
+                  Center(
+                    child: Text(
+                      index.toString(),
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                  if (hasPlayer1)
+                    const Positioned(
+                      top: 2,
+                      left: 2,
+                      child: Icon(
+                        Icons.circle,
+                        color: Colors.blue,
+                        size: 14,
+                      ),
+                    ),
+                  if (hasPlayer2)
+                    const Positioned(
+                      bottom: 2,
+                      right: 2,
+                      child: Icon(
+                        Icons.circle,
+                        color: Colors.red,
+                        size: 14,
+                      ),
+                    ),
+                  if (isSpecial)
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Icon(
+                        _getCellIcon(specialCells[index]!.type),
+                        size: 12,
+                        color: Colors.white,
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -227,83 +437,31 @@ class _SnakesAndLaddersScreenState extends State<SnakesAndLaddersScreen>
   Color _getCellColor(CellType type) {
     switch (type) {
       case CellType.bonus:
-        return Colors.green[200]!;
+        return Colors.green[300]!;
       case CellType.malus:
-        return Colors.red[200]!;
+        return Colors.red[300]!;
       case CellType.ladder:
-        return Colors.blue[200]!;
+        return Colors.blue[300]!;
       case CellType.snake:
-        return Colors.orange[200]!;
+        return Colors.orange[300]!;
       case CellType.teleport:
-        return Colors.purple[200]!;
+        return Colors.purple[300]!;
     }
   }
 
-  Widget buildDice() {
-    return Transform.rotate(
-      angle: _animation.value * 4 * pi,
-      child: Container(
-        width: 80,
-        height: 80,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 5,
-              spreadRadius: 2,
-              offset: Offset(0, _animation.value * 4),
-            ),
-          ],
-        ),
-        child: Center(
-          child: Text(
-            diceNumber.toString(),
-            style: const TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Snakes & Ladders'),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                gameEnded
-                    ? 'Joueur $currentPlayer a gagné!'
-                    : 'Tour du Joueur $currentPlayer',
-                style: const TextStyle(fontSize: 24),
-              ),
-              const SizedBox(height: 20),
-              buildGameBoard(),
-              const SizedBox(height: 20),
-              AnimatedBuilder(
-                animation: _animation,
-                builder: (context, child) => buildDice(),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: gameEnded || isRolling ? null : rollDice,
-                child: Text(isRolling ? 'Lancement...' : 'Lancer le dé'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  IconData _getCellIcon(CellType type) {
+    switch (type) {
+      case CellType.bonus:
+        return Icons.add_circle;
+      case CellType.malus:
+        return Icons.remove_circle;
+      case CellType.ladder:
+        return Icons.arrow_upward;
+      case CellType.snake:
+        return Icons.arrow_downward;
+      case CellType.teleport:
+        return Icons.swap_horiz;
+    }
   }
 }
 

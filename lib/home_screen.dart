@@ -1,6 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
+import 'features/core/providers/game_provider.dart';
+import 'features/game_selection/presentation/widgets/game_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -10,147 +13,162 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Welcome!',
-                      style: GoogleFonts.poppins(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Search Bar
-                    Container(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
+        child: Consumer<GameProvider>(
+          builder: (context, gameProvider, child) {
+            final recentGames = gameProvider.recentGames;
+            final playedGameIds = gameProvider.playedGameIds;
+
+            return CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Welcome!',
+                          style: GoogleFonts.poppins(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        if (recentGames.isNotEmpty) ...[
+                          Text(
+                            'Recent Games',
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            height: 200,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: recentGames.length,
+                              itemBuilder: (context, index) {
+                                final game = recentGames[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 16),
+                                  child: GameCard(
+                                    gameId: game.gameId,
+                                    title: game.gameName,
+                                    score: game.score,
+                                    onTap: () =>
+                                        _navigateToGame(context, game.gameId),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ],
-                      ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Search for games',
-                          hintStyle: GoogleFonts.poppins(
-                            color: Colors.grey[400],
-                          ),
-                          prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
+                        const SizedBox(height: 24),
+                        Text(
+                          'New Games',
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              ),
-            ),
-            // Featured Section
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'Featured',
-                      style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 190,
-                    child: ListView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        _buildFeaturedItem(
-                          'New Adventures',
-                          'Exciting games just!',
-                          'https://picsum.photos/400/300?random=1',
-                        ),
-                        const SizedBox(width: 16),
-                        _buildFeaturedItem(
-                          'Mega Sale',
-                          'Limited time offers',
-                          'https://picsum.photos/400/300?random=2',
-                        ),
+                        const SizedBox(height: 16),
+                        // Add new games grid here
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            // Popular Games Section
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Popular Games',
-                      style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                ),
+                // Featured Section
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'Featured',
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
                       ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        height: 190,
+                        child: ListView(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            _buildFeaturedItem(
+                              'New Adventures',
+                              'Exciting games just!',
+                              'https://picsum.photos/400/300?random=1',
+                            ),
+                            const SizedBox(width: 16),
+                            _buildFeaturedItem(
+                              'Mega Sale',
+                              'Limited time offers',
+                              'https://picsum.photos/400/300?random=2',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Popular Games Section
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Popular Games',
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate([
-                _buildGameListItem(
-                  'Epic Battle',
-                  'Join the ultimate fight for glory.',
-                  'https://picsum.photos/200/200?random=3',
+                SliverList(
+                  delegate: SliverChildListDelegate([
+                    _buildGameListItem(
+                      'Epic Battle',
+                      'Join the ultimate fight for glory.',
+                      'https://picsum.photos/200/200?random=3',
+                    ),
+                    _buildGameListItem(
+                      'Mystery Quest',
+                      'Unravel the secrets of the past.',
+                      'https://picsum.photos/200/200?random=4',
+                    ),
+                    _buildGameListItem(
+                      'Fantasy World',
+                      'Explore magical realms of adventure.',
+                      'https://picsum.photos/200/200?random=5',
+                    ),
+                    _buildGameListItem(
+                      'Racing Legends',
+                      'Who will speed to victory?',
+                      'https://picsum.photos/200/200?random=6',
+                    ),
+                  ]),
                 ),
-                _buildGameListItem(
-                  'Mystery Quest',
-                  'Unravel the secrets of the past.',
-                  'https://picsum.photos/200/200?random=4',
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 80),
                 ),
-                _buildGameListItem(
-                  'Fantasy World',
-                  'Explore magical realms of adventure.',
-                  'https://picsum.photos/200/200?random=5',
-                ),
-                _buildGameListItem(
-                  'Racing Legends',
-                  'Who will speed to victory?',
-                  'https://picsum.photos/200/200?random=6',
-                ),
-              ]),
-            ),
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 80),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
       bottomNavigationBar: Container(
@@ -197,6 +215,10 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _navigateToGame(BuildContext context, String gameId) {
+    // Implement navigation to specific game
   }
 
   Widget _buildFeaturedItem(String title, String subtitle, String imageUrl) {

@@ -70,9 +70,9 @@ class _CoinFlipScreenState extends State<CoinFlipScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black87),
@@ -89,77 +89,98 @@ class _CoinFlipScreenState extends State<CoinFlipScreen>
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildScoreCard('Victoires', wins, Colors.green),
+                Container(
+                  height: 40,
+                  width: 2,
+                  color: Colors.grey[300],
+                ),
                 _buildScoreCard('Défaites', losses, Colors.red),
               ],
             ),
           ),
-          const Spacer(),
-          RotationTransition(
-            turns: _animation,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.amber[300],
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AnimatedBuilder(
+                    animation: _animation,
+                    builder: (context, child) {
+                      return Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.identity()
+                          ..setEntry(3, 2, 0.001)
+                          ..rotateX(_animation.value * 12 * pi),
+                        child: Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.amber,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.amber[300]!,
+                                Colors.amber[700]!,
+                              ],
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              isHeads == null
+                                  ? '?'
+                                  : isHeads!
+                                      ? 'P'
+                                      : 'F',
+                              style: GoogleFonts.poppins(
+                                fontSize: 80,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 40),
+                  if (playerChoice != null)
+                    Text(
+                      'Vous avez choisi : $playerChoice',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  const SizedBox(height: 40),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildChoiceButton('Pile', true, Colors.blue),
+                      const SizedBox(width: 20),
+                      _buildChoiceButton('Face', false, Colors.purple),
+                    ],
                   ),
                 ],
               ),
-              child: Center(
-                child: Text(
-                  isHeads == null
-                      ? '?'
-                      : isHeads!
-                          ? 'P'
-                          : 'F',
-                  style: GoogleFonts.poppins(
-                    fontSize: 64,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
             ),
           ),
-          const Spacer(),
-          if (isHeads != null)
-            Text(
-              (isHeads! && playerChoice == 'Pile') ||
-                      (!isHeads! && playerChoice == 'Face')
-                  ? 'Vous avez gagné !'
-                  : 'Vous avez perdu !',
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: (isHeads! && playerChoice == 'Pile') ||
-                        (!isHeads! && playerChoice == 'Face')
-                    ? Colors.green
-                    : Colors.red,
-              ),
-            ),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildChoiceButton('Pile', true),
-                _buildChoiceButton('Face', false),
-              ],
-            ),
-          ),
-          const SizedBox(height: 32),
         ],
       ),
     );
@@ -167,29 +188,22 @@ class _CoinFlipScreenState extends State<CoinFlipScreen>
 
   Widget _buildScoreCard(String label, int score, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         children: [
           Text(
             label,
             style: GoogleFonts.poppins(
-              fontSize: 16,
+              fontSize: 14,
+              color: color,
               fontWeight: FontWeight.w500,
-              color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
             score.toString(),
             style: GoogleFonts.poppins(
@@ -203,15 +217,18 @@ class _CoinFlipScreenState extends State<CoinFlipScreen>
     );
   }
 
-  Widget _buildChoiceButton(String label, bool isHeads) {
+  Widget _buildChoiceButton(String label, bool choice, Color color) {
     return ElevatedButton(
-      onPressed: () => _flipCoin(isHeads),
+      onPressed: () => _flipCoin(choice),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+        backgroundColor: color,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 32,
+          vertical: 16,
+        ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(30),
         ),
         elevation: 4,
       ),
