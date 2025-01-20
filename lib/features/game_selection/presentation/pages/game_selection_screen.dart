@@ -76,9 +76,10 @@ class _GameSelectionScreenState extends State<GameSelectionScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: [
                 GameCard(
+                  gameId: "1",
                   title: 'Tic-Tac-Toe (Morpion)',
                   description: 'Le classique jeu de morpion à deux joueurs',
-                  onPlay: () => Navigator.push(
+                  onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const TicTacToeScreen(),
@@ -87,9 +88,10 @@ class _GameSelectionScreenState extends State<GameSelectionScreen> {
                 ),
                 const SizedBox(height: 16),
                 GameCard(
+                  gameId: "2",
                   title: 'Pierre-Papier-Ciseaux',
                   description: 'Affrontez l\'ordinateur dans ce jeu de réflexe',
-                  onPlay: () => Navigator.push(
+                  onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const RockPaperScissorsScreen(),
@@ -98,9 +100,10 @@ class _GameSelectionScreenState extends State<GameSelectionScreen> {
                 ),
                 const SizedBox(height: 16),
                 GameCard(
+                  gameId: "4",
                   title: 'Pile ou Face',
                   description: 'Un simple jeu de hasard',
-                  onPlay: () => Navigator.push(
+                  onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const CoinFlipScreen(),
@@ -109,9 +112,12 @@ class _GameSelectionScreenState extends State<GameSelectionScreen> {
                 ),
                 const SizedBox(height: 16),
                 GameCard(
+                  
+
+                  gameId: "3",
                   title: 'Ludo Simplifié',
                   description: 'Une version simplifiée du jeu Ludo',
-                  onPlay: () => Navigator.push(
+                  onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const SnakesAndLaddersScreen(),
@@ -120,9 +126,10 @@ class _GameSelectionScreenState extends State<GameSelectionScreen> {
                 ),
                 const SizedBox(height: 16),
                 GameCard(
+                  gameId: "5",
                   title: 'Découvrir le hasard',
                   description: 'Un simple jeu de hasard',
-                  onPlay: () => Navigator.push(
+                  onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const DiceGameScreen(),
@@ -132,8 +139,9 @@ class _GameSelectionScreenState extends State<GameSelectionScreen> {
                 const SizedBox(height: 16),
                 GameCard(
                   title: 'Dames',
+                  gameId: "6",
                   description: 'Un jeu de dames simplifié',
-                  onPlay: () => Navigator.push(
+                  onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const CheckersGameScreen(),
@@ -143,8 +151,9 @@ class _GameSelectionScreenState extends State<GameSelectionScreen> {
                 const SizedBox(height: 16),
                 GameCard(
                   title: 'Jeu de course virtuelle',
+                  gameId: "7",
                   description: 'Un jeu de course virtuelle simplifié',
-                  onPlay: () => Navigator.push(
+                  onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const ModeSelectionScreen(),
@@ -154,8 +163,9 @@ class _GameSelectionScreenState extends State<GameSelectionScreen> {
                 const SizedBox(height: 16),
                 GameCard(
                   title: 'Jeu de Ngola',
+                  gameId: "8",
                   description: 'Un jeu de Ngola simplifié',
-                  onPlay: () => Navigator.push(
+                  onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const NgolaGameScreen(),
