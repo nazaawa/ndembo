@@ -51,6 +51,7 @@ dependencies:
   equatable: ^2.0.5
   json_annotation: ^4.8.1
   auto_route: ^7.8.4
+  flame: ^1.23.0
 
 dev_dependencies:
   flutter_test:

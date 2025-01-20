@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../data/models/game_model.dart';
+import 'game_type.dart';
 
 class Game extends Equatable {
   final String id;

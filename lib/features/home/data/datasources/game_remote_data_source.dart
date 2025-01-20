@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:ndembo/features/home/domain/entities/game_type.dart';
 import '../models/game_model.dart';
 
 abstract class GameRemoteDataSource {
@@ -19,7 +20,7 @@ class GameRemoteDataSourceImpl implements GameRemoteDataSource {
     // TODO: Implement real API call
     // This is mock data for now
     return [
-      const GameModel(
+      GameModel(
         id: '1',
         title: 'Tic-Tac-Toe',
         description: 'Le classique jeu de morpion! Affrontez l\'ordinateur ou un ami.',
@@ -27,7 +28,7 @@ class GameRemoteDataSourceImpl implements GameRemoteDataSource {
         isFeatured: true,
         gameType: GameType.tictactoe,
       ),
-      const GameModel(
+      GameModel(
         id: '2',
         title: 'Pierre-Papier-Ciseaux',
         description: 'Testez votre chance et votre stratégie!',
@@ -42,28 +43,28 @@ class GameRemoteDataSourceImpl implements GameRemoteDataSource {
   Future<List<GameModel>> getPopularGames() async {
     // TODO: Implement real API call
     return [
-      const GameModel(
+      GameModel(
         id: '3',
         title: 'Pile ou Face',
         description: 'Un simple jeu de hasard. Choisissez pile ou face!',
         imageUrl: 'https://picsum.photos/200/200?random=3',
         gameType: GameType.coinFlip,
       ),
-      const GameModel(
+      GameModel(
         id: '4',
         title: 'Tic-Tac-Toe Pro',
         description: 'Version avancée avec des défis supplémentaires.',
         imageUrl: 'https://picsum.photos/200/200?random=4',
         gameType: GameType.tictactoe,
       ),
-      const GameModel(
+      GameModel(
         id: '5',
         title: 'Pierre-Papier-Ciseaux Tournoi',
         description: 'Participez à des tournois en ligne!',
         imageUrl: 'https://picsum.photos/200/200?random=5',
         gameType: GameType.rockPaperScissors,
       ),
-      const GameModel(
+      GameModel(
         id: '6',
         title: 'Pile ou Face Challenge',
         description: 'Défiez vos amis dans des séries de lancers.',
