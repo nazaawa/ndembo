@@ -186,6 +186,159 @@ class GameSelectionScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+                _buildGameCard(
+                  'Serpents et Échelles',
+                  'Le jeu de plateau classique',
+                  Icons.timeline,
+                  Colors.green[700]!,
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SnakesAndLaddersScreen(),
+                    ),
+                  ),
+                ),
+                _buildGameCard(
+                  'Jeu de Dames',
+                  'Le jeu de stratégie',
+                  Icons.grid_on,
+                  Colors.brown[700]!,
+                  () async {
+                    final vsComputer = await showDialog<bool>(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.all(24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Choisir votre Adversaire',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.brown[700],
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 24),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    _buildModeChoice(
+                                      context: context,
+                                      icon: Icons.people,
+                                      title: '2 Joueurs',
+                                      subtitle: 'Jouer à deux',
+                                      color: Colors.blue,
+                                      onTap: () =>
+                                          Navigator.pop(context, false),
+                                    ),
+                                    _buildModeChoice(
+                                      context: context,
+                                      icon: Icons.computer,
+                                      title: 'vs IA',
+                                      subtitle: 'Défier l\'ordinateur',
+                                      color: Colors.green,
+                                      onTap: () => Navigator.pop(context, true),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+
+                    if (vsComputer == true) {
+                      final level = await showDialog<AILevel>(
+                        context: context,
+                        builder: (context) {
+                          return Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Niveau de Difficulté',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green[700],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 24),
+                                  _buildDifficultyChoice(
+                                    context: context,
+                                    icon: Icons.sentiment_satisfied,
+                                    title: 'Facile',
+                                    description: 'Pour débuter tranquillement',
+                                    color: Colors.green,
+                                    level: AILevel.easy,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildDifficultyChoice(
+                                    context: context,
+                                    icon: Icons.sentiment_neutral,
+                                    title: 'Moyen',
+                                    description: 'Pour un défi équilibré',
+                                    color: Colors.orange,
+                                    level: AILevel.medium,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildDifficultyChoice(
+                                    context: context,
+                                    icon: Icons.sentiment_very_dissatisfied,
+                                    title: 'Difficile',
+                                    description: 'Pour les experts',
+                                    color: Colors.red,
+                                    level: AILevel.hard,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+
+                      if (level != null) {
+                        if (!context.mounted) return;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CheckersGameScreen(
+                              vsComputer: true,
+                              aiLevel: level,
+                            ),
+                          ),
+                        );
+                      }
+                    } else if (vsComputer == false) {
+                      if (!context.mounted) return;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CheckersGameScreen(
+                            vsComputer: false,
+                            aiLevel: null,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+            
               ],
             ),
             const SizedBox(height: 24),
@@ -311,6 +464,123 @@ class GameSelectionScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModeChoice({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: 120,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 2,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 40,
+              color: color,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                color: Colors.black54,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDifficultyChoice({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String description,
+    required Color color,
+    required AILevel level,
+  }) {
+    return InkWell(
+      onTap: () => Navigator.pop(context, level),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 2,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                size: 24,
+                color: color,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: color,
+                    ),
+                  ),
+                  Text(
+                    description,
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: Colors.black54,
+                    ),
                   ),
                 ],
               ),
