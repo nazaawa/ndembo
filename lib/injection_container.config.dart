@@ -38,10 +38,7 @@ Future<_i174.GetIt> init(
     () => registerModule.sharedPreferences,
     preResolve: true,
   );
-  gh.factory<_i634.CardGamesDataSource>(() => _i634.CardGamesDataSource());
   gh.lazySingleton<_i361.Dio>(() => registerModule.dio);
-  gh.factory<_i351.GameRemoteDataSource>(() => _i351.GameRemoteDataSourceImpl(
-      cardGamesDataSource: gh<_i634.CardGamesDataSource>()));
   gh.lazySingleton<_i361.Dio>(
     () => registerModule.dio,
     instanceName: 'BaseClient',
